@@ -5,21 +5,24 @@
  */
 package servlets;
 
+import entity.Book;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import session.BookFacade;
 
 /**
  *
  * @author Melnikov
  */
-@WebServlet(name = "Servlet1", urlPatterns = {"/page1","/page2"})
-public class Servlet1 extends HttpServlet {
-
+@WebServlet(name = "Library", urlPatterns = {"/newBook","/addBook"})
+public class Library extends HttpServlet {
+@EJB BookFacade bookFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -32,16 +35,20 @@ public class Servlet1 extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
-        String textToPage = "";
+        request.setCharacterEncoding("UTF8");
         String path = request.getServletPath();
-        if("/page1".equals(path)){
-            textToPage = "Текст для вставки в страницу page1";
-            request.setAttribute("textToPage", textToPage);
-            request.getRequestDispatcher("/WEB-INF/pages/page1.jsp").forward(request, response);
-        }else if("/page2".equals(path)){
-            textToPage = "Текст для вставки в страницу page2";
-            request.setAttribute("textToPage", textToPage);
+        if("/newBook".equals(path)){
+            request.getRequestDispatcher("/WEB-INF/pages/newBook.jsp").forward(request, response);
+        }else if("/addBook".equals(path)){
+            String nameBook = request.getParameter("nameBook");
+            String author = request.getParameter("author");
+            String yearPublished = request.getParameter("yearPublished");
+            String isbn = request.getParameter("isbn");
+            
+            Book book = new Book(nameBook, author, new Integer(yearPublished), isbn);
+            bookFacade.create(book);
+            request.setAttribute("book", book);
+            
             request.getRequestDispatcher("/WEB-INF/pages/page2.jsp").forward(request, response);
         }
     }

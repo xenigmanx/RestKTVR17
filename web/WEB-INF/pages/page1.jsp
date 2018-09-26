@@ -7,5 +7,6 @@
     </head>
     <body>
         <h1>Page1.jsp</h1>
+        ${textToPage}
     </body>
 </html>

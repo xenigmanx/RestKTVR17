@@ -13,5 +13,12 @@
     </head>
     <body>
         <h1>page2.jsp</h1>
+        ${textToPage}
+        <a href="newBook">добавить книгу</a>
+        <br>
+        Добавленная книга:<br>
+        Название: ${book.nameBook}<br>
+        Автор: ${book.author}
+        
     </body>
 </html>

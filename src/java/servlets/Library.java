@@ -6,6 +6,7 @@
 package servlets;
 
 import entity.Book;
+import entity.Reader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
@@ -15,23 +16,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import session.BookFacade;
+import session.ReaderFacade;
 
 /**
  *
  * @author Melnikov
  */
-@WebServlet(name = "Library", urlPatterns = {"/newBook","/addBook"})
+@WebServlet(name = "Library", urlPatterns = {"/newBook","/addBook","/newReader","/addReader"})
 public class Library extends HttpServlet {
+    
 @EJB BookFacade bookFacade;
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+@EJB ReaderFacade readerFacade;
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -44,11 +40,20 @@ public class Library extends HttpServlet {
             String author = request.getParameter("author");
             String yearPublished = request.getParameter("yearPublished");
             String isbn = request.getParameter("isbn");
-            
             Book book = new Book(nameBook, author, new Integer(yearPublished), isbn);
             bookFacade.create(book);
             request.setAttribute("book", book);
-            
+            request.getRequestDispatcher("/WEB-INF/pages/page2.jsp").forward(request, response);
+        }else if("/newReader".equals(path)){
+            request.getRequestDispatcher("/WEB-INF/pages/newReader.jsp").forward(request, response);
+        }else if("/addReader".equals(path)){
+            String name = request.getParameter("name");
+            String surname = request.getParameter("surname");
+            String phone = request.getParameter("phone");
+            String city = request.getParameter("city");
+            Reader reader = new Reader(name, surname, phone, city);
+            readerFacade.create(reader);
+            request.setAttribute("reader", reader);
             request.getRequestDispatcher("/WEB-INF/pages/page2.jsp").forward(request, response);
         }
     }

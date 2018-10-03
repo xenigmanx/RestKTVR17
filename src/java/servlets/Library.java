@@ -9,6 +9,7 @@ import entity.Book;
 import entity.Reader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +23,7 @@ import session.ReaderFacade;
  *
  * @author Melnikov
  */
-@WebServlet(name = "Library", urlPatterns = {"/newBook","/addBook","/newReader","/addReader"})
+@WebServlet(name = "Library", urlPatterns = {"/newBook","/addBook","/newReader","/addReader","/showBooks"})
 public class Library extends HttpServlet {
     
 @EJB BookFacade bookFacade;
@@ -43,7 +44,7 @@ public class Library extends HttpServlet {
             Book book = new Book(nameBook, author, new Integer(yearPublished), isbn);
             bookFacade.create(book);
             request.setAttribute("book", book);
-            request.getRequestDispatcher("/WEB-INF/pages/page2.jsp").forward(request, response);
+            request.getRequestDispatcher("/page2.jsp").forward(request, response);
         }else if("/newReader".equals(path)){
             request.getRequestDispatcher("/WEB-INF/pages/newReader.jsp").forward(request, response);
         }else if("/addReader".equals(path)){
@@ -54,7 +55,11 @@ public class Library extends HttpServlet {
             Reader reader = new Reader(name, surname, phone, city);
             readerFacade.create(reader);
             request.setAttribute("reader", reader);
-            request.getRequestDispatcher("/WEB-INF/pages/page2.jsp").forward(request, response);
+            request.getRequestDispatcher("/page2.jsp").forward(request, response);
+        }else if("/showBooks".equals(path)){
+            List<Book> listBooks = bookFacade.findAll();
+            request.setAttribute("listBooks", listBooks);
+            request.getRequestDispatcher("/listBooks.jsp").forward(request, response);
         }
     }
 

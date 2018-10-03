@@ -15,7 +15,8 @@
         <h1>page2.jsp</h1>
         ${textToPage}<br>
         <a href="newBook">добавить книгу</a><br>
-        <a href="newReader">добавить читателя</a>
+        <a href="newReader">добавить читателя</a><br>
+        <a href="showBooks">Список книг</a>
         <br>
         Добавлена книга:<br>
         Название: ${book.nameBook}<br>

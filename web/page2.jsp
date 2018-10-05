@@ -16,7 +16,10 @@
         ${textToPage}<br>
         <a href="newBook">добавить книгу</a><br>
         <a href="newReader">добавить читателя</a><br>
-        <a href="showBooks">Список книг</a>
+        <a href="showBooks">Список книг</a><br>
+        <a href="showReader">Список читателей</a><br>
+        <a href="library">Выдать книгу</a>
+        <a href="showTakeBook">Список выданных книг</a>
         <br>
         Добавлена книга:<br>
         Название: ${book.nameBook}<br>

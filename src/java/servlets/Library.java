@@ -6,9 +6,11 @@
 package servlets;
 
 import entity.Book;
+import entity.History;
 import entity.Reader;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -17,17 +19,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import session.BookFacade;
+import session.HistoryFacade;
 import session.ReaderFacade;
 
 /**
  *
  * @author Melnikov
  */
-@WebServlet(name = "Library", urlPatterns = {"/newBook","/addBook","/newReader","/addReader","/showBooks"})
+@WebServlet(name = "Library", urlPatterns = {"/newBook","/addBook","/newReader","/addReader",
+    "/showBooks","/showReader","/library","/takeBook","/showTakeBook"})
 public class Library extends HttpServlet {
     
 @EJB BookFacade bookFacade;
 @EJB ReaderFacade readerFacade;
+@EJB HistoryFacade historyFacade;
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -60,6 +65,27 @@ public class Library extends HttpServlet {
             List<Book> listBooks = bookFacade.findAll();
             request.setAttribute("listBooks", listBooks);
             request.getRequestDispatcher("/listBooks.jsp").forward(request, response);
+        }else if("/showReader".equals(path)){
+            List<Reader> listReader = readerFacade.findAll();
+            request.setAttribute("listReader", listReader);
+            request.getRequestDispatcher("/listReader.jsp").forward(request, response);
+        }else if("/library".equals(path)){
+            request.setAttribute("listBooks", bookFacade.findAll());
+            request.setAttribute("listReader", readerFacade.findAll());
+            request.getRequestDispatcher("/library.jsp").forward(request, response);
+        }else if("/showTakeBook".equals(path)){
+            request.getRequestDispatcher("/listTakeBooks.jsp").forward(request, response);
+        }else if("/takeBook".equals(path)){
+            String selectedBook = request.getParameter("selectedBook");
+            String selectedReader = request.getParameter("selectedReader");
+            Book book = bookFacade.find(new Long(selectedBook));
+            Reader reader = readerFacade.find(new Long(selectedReader));
+            Calendar c = new GregorianCalendar();
+            History history = new History(book, reader, c.getTime(), null);
+            historyFacade.create(history);
+            List<History> takeBooks = historyFacade.findTakeBooks();
+            request.setAttribute("takeBooks", takeBooks);
+            request.getRequestDispatcher("/listTakeBooks.jsp").forward(request, response);
         }
     }
 

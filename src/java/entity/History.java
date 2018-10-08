@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,9 +26,9 @@ public class History implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(cascade = {CascadeType.MERGE,})
+    @OneToOne
     private Book book;
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne
     private Reader reader;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateBegin;

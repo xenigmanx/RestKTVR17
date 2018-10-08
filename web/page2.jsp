@@ -9,16 +9,16 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Главная</title>
     </head>
     <body>
-        <h1>page2.jsp</h1>
+        <h1>Навигация по сайту</h1>
         ${textToPage}<br>
         <a href="newBook">добавить книгу</a><br>
         <a href="newReader">добавить читателя</a><br>
         <a href="showBooks">Список книг</a><br>
         <a href="showReader">Список читателей</a><br>
-        <a href="library">Выдать книгу</a>
+        <a href="library">Выдать книгу</a><br>
         <a href="showTakeBook">Список выданных книг</a>
         <br>
         Добавлена книга:<br>

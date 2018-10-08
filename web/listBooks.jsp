@@ -16,7 +16,10 @@
         <h1>Список книг:</h1>
         <ul>
             <c:forEach var="book" items="${listBooks}">
-                <li>${book.nameBook} ${book.author}</li>
+                <li>
+                    ${book.nameBook} ${book.author} 
+                    <a href="deleteBook?deleteBookId=${book.id}">Удалить книгу</a>
+                </li>
             </c:forEach>
         </ul>
     </body>

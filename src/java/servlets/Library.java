@@ -27,7 +27,8 @@ import session.ReaderFacade;
  * @author Melnikov
  */
 @WebServlet(name = "Library", urlPatterns = {"/newBook","/addBook","/newReader","/addReader",
-    "/showBooks","/showReader","/library","/takeBook","/showTakeBook"})
+    "/showBooks","/showReader","/library","/takeBook","/showTakeBook","/returnBook",
+    "/deleteBook"})
 public class Library extends HttpServlet {
     
 @EJB BookFacade bookFacade;
@@ -74,6 +75,8 @@ public class Library extends HttpServlet {
             request.setAttribute("listReader", readerFacade.findAll());
             request.getRequestDispatcher("/library.jsp").forward(request, response);
         }else if("/showTakeBook".equals(path)){
+            List<History> takeBooks = historyFacade.findTakeBooks();
+            request.setAttribute("takeBooks", takeBooks);
             request.getRequestDispatcher("/listTakeBooks.jsp").forward(request, response);
         }else if("/takeBook".equals(path)){
             String selectedBook = request.getParameter("selectedBook");
@@ -86,6 +89,22 @@ public class Library extends HttpServlet {
             List<History> takeBooks = historyFacade.findTakeBooks();
             request.setAttribute("takeBooks", takeBooks);
             request.getRequestDispatcher("/listTakeBooks.jsp").forward(request, response);
+        }else if("/returnBook".equals(path)){
+            String returnBookId = request.getParameter("returnBookId");
+            History history = historyFacade.find(new Long(returnBookId));
+            Calendar c = new GregorianCalendar();
+            history.setDateReturn(c.getTime());
+            historyFacade.edit(history);
+            List<History> takeBooks = historyFacade.findTakeBooks();
+            request.setAttribute("takeBooks", takeBooks);
+            request.getRequestDispatcher("/listTakeBooks.jsp").forward(request, response);
+        }else if("/deleteBook".equals(path)){
+            String deleteBookId = request.getParameter("deleteBookId");
+            Book book = bookFacade.find(new Long(deleteBookId));
+            bookFacade.remove(book);
+            List<Book> listBooks = bookFacade.findAll();
+            request.setAttribute("listBooks", listBooks);
+            request.getRequestDispatcher("/listBooks.jsp").forward(request, response);
         }
     }
 

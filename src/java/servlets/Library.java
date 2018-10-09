@@ -82,7 +82,7 @@ public class Library extends HttpServlet {
                 break;
             }
         case "/showBooks":{
-            List<Book> listBooks = bookFacade.findAll();
+            List<Book> listBooks = bookFacade.findActived(true);
             request.setAttribute("listBooks", listBooks);
             request.getRequestDispatcher("/listBooks.jsp").forward(request, response);
                 break;
@@ -93,7 +93,7 @@ public class Library extends HttpServlet {
             request.getRequestDispatcher("/listReader.jsp").forward(request, response);
             break;
         case "/library":
-            request.setAttribute("listBooks", bookFacade.findAll());
+            request.setAttribute("listBooks", bookFacade.findActived(true));
             request.setAttribute("listReader", readerFacade.findAll());
             request.getRequestDispatcher("/library.jsp").forward(request, response);
             break;
@@ -117,8 +117,8 @@ public class Library extends HttpServlet {
                 break;
             }
         case "/returnBook":{
-            String returnBookId = request.getParameter("returnBookId");
-            History history = historyFacade.find(new Long(returnBookId));
+            String historyId = request.getParameter("historyId");
+            History history = historyFacade.find(new Long(historyId));
             Calendar c = new GregorianCalendar();
             history.setDateReturn(c.getTime());
             historyFacade.edit(history);
@@ -129,8 +129,11 @@ public class Library extends HttpServlet {
             }
         case "/deleteBook":{
             String deleteBookId = request.getParameter("deleteBookId");
-            historyFacade.remove(deleteBookId);
-            List<Book> listBooks = bookFacade.findAll();
+            Book book = bookFacade.find(new Long(deleteBookId));
+            book.setActive(Boolean.FALSE);
+            bookFacade.edit(book);
+            //historyFacade.remove(deleteBookId);
+            List<Book> listBooks = bookFacade.findActived(true);
             request.setAttribute("listBooks", listBooks);
             request.getRequestDispatcher("/listBooks.jsp").forward(request, response);
                 break;

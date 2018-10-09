@@ -61,7 +61,8 @@ public class Library extends HttpServlet {
             String author = request.getParameter("author");
             String yearPublished = request.getParameter("yearPublished");
             String isbn = request.getParameter("isbn");
-            Book book = new Book(nameBook, author, new Integer(yearPublished), isbn);
+            String countStr = request.getParameter("count");
+            Book book = new Book(nameBook, author, new Integer(yearPublished), isbn, new Integer(countStr));
             bookFacade.create(book);
             request.setAttribute("book", book);
             request.getRequestDispatcher("/page2.jsp").forward(request, response);
@@ -107,10 +108,17 @@ public class Library extends HttpServlet {
             String selectedBook = request.getParameter("selectedBook");
             String selectedReader = request.getParameter("selectedReader");
             Book book = bookFacade.find(new Long(selectedBook));
+            
             Reader reader = readerFacade.find(new Long(selectedReader));
             Calendar c = new GregorianCalendar();
-            History history = new History(book, reader, c.getTime(), null);
-            historyFacade.create(history);
+            if(book.getCount()>0){
+                book.setCount(book.getCount()-1);
+                bookFacade.edit(book);
+                History history = new History(book, reader, c.getTime(), null);
+                historyFacade.create(history);
+            }else{
+                request.setAttribute("info", "Все книги выданы");
+            }
             List<History> takeBooks = historyFacade.findTakeBooks();
             request.setAttribute("takeBooks", takeBooks);
             request.getRequestDispatcher("/listTakeBooks.jsp").forward(request, response);
@@ -121,6 +129,7 @@ public class Library extends HttpServlet {
             History history = historyFacade.find(new Long(historyId));
             Calendar c = new GregorianCalendar();
             history.setDateReturn(c.getTime());
+            history.getBook().setCount(history.getBook().getCount()+1);
             historyFacade.edit(history);
             List<History> takeBooks = historyFacade.findTakeBooks();
             request.setAttribute("takeBooks", takeBooks);

@@ -6,7 +6,6 @@
 package entity;
 
 import java.util.Objects;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,17 +26,19 @@ public class Book {
     private int yearPublished;
     @Column(unique = true)
     private String isbn;
+    private int count;
     private Boolean active;
 
     public Book() {
     }
 
-    public Book(String nameBook, String author, int yearPublished, String isbn) {
+    public Book(String nameBook, String author, int yearPublished, String isbn, int count) {
         this.nameBook = nameBook;
         this.author = author;
         this.yearPublished = yearPublished;
         this.isbn = isbn;
         this.active = true;
+        this.count = count;
     }
 
     public String getIsbn() {
@@ -75,10 +76,13 @@ public class Book {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.nameBook);
-        hash = 89 * hash + Objects.hashCode(this.author);
-        hash = 89 * hash + this.yearPublished;
-        hash = 89 * hash + Objects.hashCode(this.isbn);
+        hash = 61 * hash + Objects.hashCode(this.id);
+        hash = 61 * hash + Objects.hashCode(this.nameBook);
+        hash = 61 * hash + Objects.hashCode(this.author);
+        hash = 61 * hash + this.yearPublished;
+        hash = 61 * hash + Objects.hashCode(this.isbn);
+        hash = 61 * hash + this.count;
+        hash = 61 * hash + Objects.hashCode(this.active);
         return hash;
     }
 
@@ -97,6 +101,9 @@ public class Book {
         if (this.yearPublished != other.yearPublished) {
             return false;
         }
+        if (this.count != other.count) {
+            return false;
+        }
         if (!Objects.equals(this.nameBook, other.nameBook)) {
             return false;
         }
@@ -106,12 +113,20 @@ public class Book {
         if (!Objects.equals(this.isbn, other.isbn)) {
             return false;
         }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.active, other.active)) {
+            return false;
+        }
         return true;
     }
 
+   
+
     @Override
     public String toString() {
-        return "Book{" + "id=" + id + ", nameBook=" + nameBook + ", author=" + author + ", yearPublished=" + yearPublished + ", isbn=" + isbn + ", active=" + active + '}';
+        return "Book{" + "id=" + id + ", nameBook=" + nameBook + ", author=" + author + ", yearPublished=" + yearPublished + ", isbn=" + isbn + ", count=" + count + ", active=" + active + '}';
     }
 
     public Long getId() {
@@ -128,6 +143,14 @@ public class Book {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
     
 }

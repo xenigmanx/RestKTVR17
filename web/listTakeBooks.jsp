@@ -14,6 +14,7 @@
     </head>
     <body>
         <h1>Список выданных книг</h1>
+        ${info}
             <ul>
                 <c:forEach var="history" items="${takeBooks}">
                     <li>Книга: ${history.book.nameBook} взята: ${history.reader.name} ${history.reader.surname}

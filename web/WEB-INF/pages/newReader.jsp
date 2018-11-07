@@ -27,14 +27,12 @@
             <input type="text" name="login"><br>
             <br>
              Пароль<br>
-            <input type="text" name="password1"><br>
+            <input type="password" name="password1"><br>
             <br>
              Повторите пароль<br>
-            <input type="text" name="password2"><br>
+            <input type="password" name="password2"><br>
             <br>
             <input type="submit" value="Добавить">
         </form><br>
-        
-        
     </body>
 </html>

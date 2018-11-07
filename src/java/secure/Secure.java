@@ -5,13 +5,16 @@
  */
 package secure;
 
+import entity.Reader;
 import java.io.IOException;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import session.ReaderFacade;
 import session.RoleFacade;
 import session.UserRolesFacade;
 import util.PageReturner;
@@ -22,11 +25,15 @@ import util.PageReturner;
  */
 @WebServlet(name = "Secure", urlPatterns = {
     "/newRole",
-    "/addRole"
+    "/addRole",
+    "/editUserRoles",
+    "/addUserRole"
 })
 public class Secure extends HttpServlet {
    
     @EJB RoleFacade roleFacade;
+    @EJB ReaderFacade readerFacade;
+    @EJB UserRolesFacade userRolesFacade;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -52,11 +59,35 @@ public class Secure extends HttpServlet {
             Role role = new Role();
             role.setName(nameRole.toUpperCase());
             try {
-               roleFacade.create(role); 
+                if(!role.getName().isEmpty()){
+                   roleFacade.create(role); 
+                }
             } catch (Exception e) {
                request.setAttribute("info", "Такая роль уже существует");
             }
             request.getRequestDispatcher(PageReturner.getPage("newRole")).forward(request, response);
+            break;
+            
+        case "/editUserRoles":
+            List<Reader> listUsers = readerFacade.findAll();
+            List<Role> listRoles = roleFacade.findAll();
+            request.setAttribute("listUsers", listUsers);
+            request.setAttribute("listRoles", listRoles);
+            request.getRequestDispatcher(PageReturner.getPage("editUserRoles")).forward(request, response);
+            break;
+        case "/addUserRole":
+            String userId = request.getParameter("user");
+            String roleId = request.getParameter("role");
+            Reader reader = readerFacade.find(new Long(userId));
+            Role roleToUser = roleFacade.find(new Long(roleId));
+            UserRoles ur = new UserRoles(reader, roleToUser);
+            SecureLogic sl = new SecureLogic();
+            sl.addRoleToUser(ur);
+            List<Reader> newListUsers = readerFacade.findAll();
+            List<Role> newListRoles = roleFacade.findAll();
+            request.setAttribute("listUsers", newListUsers);
+            request.setAttribute("listRoles", newListRoles);
+            request.getRequestDispatcher(PageReturner.getPage("editUserRoles")).forward(request, response);
             break;
             }
     }

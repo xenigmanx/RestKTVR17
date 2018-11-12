@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import session.ReaderFacade;
 import session.RoleFacade;
 import session.UserRolesFacade;
@@ -24,10 +25,12 @@ import util.PageReturner;
  * @author Melnikov
  */
 @WebServlet(name = "Secure", urlPatterns = {
+    "/login",
+    "/showLogin",
     "/newRole",
     "/addRole",
     "/editUserRoles",
-    "/addUserRole"
+    "/changeUserRole"
 })
 public class Secure extends HttpServlet {
    
@@ -51,6 +54,27 @@ public class Secure extends HttpServlet {
         String path = request.getServletPath();
         if(null != path)
             switch (path) {
+        case "/login":
+            String login = request.getParameter("login");
+            String password = request.getParameter("password");
+            request.setAttribute("info", "Нет такого пользователя!");
+            Reader regUser = readerFacade.fineByLogin(login);
+            if(regUser == null){
+                request.getRequestDispatcher(PageReturner.getPage("showLogin")).forward(request, response);
+                break;
+            }
+            if(password.equals(regUser.getPassword())){
+                HttpSession session = request.getSession(true);
+                session.setAttribute("regUser", regUser);
+                request.setAttribute("info", "Привет "+regUser.getName()+"! Вы вошли в систему.");
+                request.getRequestDispatcher(PageReturner.getPage("welcome")).forward(request, response);
+                break;
+            }
+            request.getRequestDispatcher(PageReturner.getPage("showLogin")).forward(request, response);
+            break;
+        case "/showLogin":
+            request.getRequestDispatcher(PageReturner.getPage("showLogin")).forward(request, response);
+            break;
         case "/newRole":
             request.getRequestDispatcher(PageReturner.getPage("newRole")).forward(request, response);
             break;
@@ -75,14 +99,23 @@ public class Secure extends HttpServlet {
             request.setAttribute("listRoles", listRoles);
             request.getRequestDispatcher(PageReturner.getPage("editUserRoles")).forward(request, response);
             break;
-        case "/addUserRole":
+        case "/changeUserRole":
+            String setButton = request.getParameter("setButton");
+            String deleteButton = request.getParameter("deleteButton");
             String userId = request.getParameter("user");
             String roleId = request.getParameter("role");
             Reader reader = readerFacade.find(new Long(userId));
             Role roleToUser = roleFacade.find(new Long(roleId));
             UserRoles ur = new UserRoles(reader, roleToUser);
+            
             SecureLogic sl = new SecureLogic();
-            sl.addRoleToUser(ur);
+            if(setButton != null){
+                sl.addRoleToUser(ur);
+            }
+            if(deleteButton != null){
+                sl.deleteRoleToUser(ur.getReader());
+            }
+                
             List<Reader> newListUsers = readerFacade.findAll();
             List<Role> newListRoles = roleFacade.findAll();
             request.setAttribute("listUsers", newListUsers);

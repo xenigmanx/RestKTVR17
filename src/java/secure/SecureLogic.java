@@ -47,5 +47,9 @@ public class SecureLogic {
     }
     public void deleteRoleToUser(Reader user){
         List<UserRoles> listUserRoles = userRolesFacade.findByUser(user);
+        int n = listUserRoles.size();
+        for(int i=0; i<n; i++){
+            userRolesFacade.remove(listUserRoles.get(i));
+        }
     }
 }

@@ -21,6 +21,11 @@
         <a href="library">Выдать книгу</a><br>
         <a href="showTakeBook">Список выданных книг</a>
         <br>
+        <p>Для администратора:</p>
+        <a href="newRole">Новая роль</a>
+        <br>
+        <a href="editUserRoles">Назначение ролей пользователям</a>
+        <br><br>
         Добавлена книга:<br>
         Название: ${book.nameBook}<br>
         Автор: ${book.author}

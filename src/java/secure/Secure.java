@@ -24,7 +24,7 @@ import util.PageReturner;
  *
  * @author Melnikov
  */
-@WebServlet(name = "Secure", urlPatterns = {
+@WebServlet(loadOnStartup = 1,name = "Secure", urlPatterns = {
     "/login",
     "/showLogin",
     "/newRole",
@@ -37,6 +37,30 @@ public class Secure extends HttpServlet {
     @EJB RoleFacade roleFacade;
     @EJB ReaderFacade readerFacade;
     @EJB UserRolesFacade userRolesFacade;
+
+    @Override
+    public void init() throws ServletException {
+        List<Reader> listReader = readerFacade.findAll();
+        if(listReader.isEmpty()){
+            Reader reader = new Reader("Сидор", "Сидоров", 
+                 "454545454", "К-Ярве", "admin", "admin");
+            readerFacade.create(reader);
+            Role role = new Role();
+            role.setName("ADMIN");
+            roleFacade.create(role);
+            UserRoles ur = new UserRoles();
+            ur.setReader(reader);
+            ur.setRole(role);
+            userRolesFacade.create(ur);
+            role.setName("USER");
+            roleFacade.create(role);
+            ur.setReader(reader);
+            ur.setRole(role);
+            userRolesFacade.create(ur);
+        }
+    }
+    
+    
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -51,6 +75,17 @@ public class Secure extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF8");
+        HttpSession session = request.getSession(false);
+        Reader regUser = null;
+        if(session != null){
+            try {
+                regUser = (Reader) session.getAttribute("regUser");
+            } catch (Exception e) {
+                regUser = null;
+            }
+        }
+            
+        SecureLogic sl = new SecureLogic();
         String path = request.getServletPath();
         if(null != path)
             switch (path) {
@@ -58,27 +93,43 @@ public class Secure extends HttpServlet {
             String login = request.getParameter("login");
             String password = request.getParameter("password");
             request.setAttribute("info", "Нет такого пользователя!");
-            Reader regUser = readerFacade.fineByLogin(login);
+            regUser = readerFacade.fineByLogin(login);
             if(regUser == null){
-                request.getRequestDispatcher(PageReturner.getPage("showLogin")).forward(request, response);
+                request.getRequestDispatcher(PageReturner.getPage("showLogin"))
+                    .forward(request, response);
                 break;
             }
             if(password.equals(regUser.getPassword())){
-                HttpSession session = request.getSession(true);
+                session = request.getSession(true);
                 session.setAttribute("regUser", regUser);
-                request.setAttribute("info", "Привет "+regUser.getName()+"! Вы вошли в систему.");
-                request.getRequestDispatcher(PageReturner.getPage("welcome")).forward(request, response);
+                request.setAttribute("info", "Привет "+regUser.getName()
+                        +"! Вы вошли в систему.");
+                request.getRequestDispatcher(PageReturner.getPage("welcome"))
+                        .forward(request, response);
                 break;
             }
-            request.getRequestDispatcher(PageReturner.getPage("showLogin")).forward(request, response);
+            request.getRequestDispatcher(PageReturner.getPage("showLogin"))
+                    .forward(request, response);
             break;
         case "/showLogin":
-            request.getRequestDispatcher(PageReturner.getPage("showLogin")).forward(request, response);
+            request.getRequestDispatcher(PageReturner.getPage("showLogin"))
+                    .forward(request, response);
             break;
         case "/newRole":
-            request.getRequestDispatcher(PageReturner.getPage("newRole")).forward(request, response);
+            if(!"ADMIN".equals(sl.getRole(regUser))){
+                request.getRequestDispatcher(PageReturner.getPage("showLogin"))
+                    .forward(request, response);
+                break;
+            }
+            request.getRequestDispatcher(PageReturner.getPage("newRole"))
+                        .forward(request, response);
             break;
         case "/addRole":
+            if(!"ADMIN".equals(sl.getRole(regUser))){
+                request.getRequestDispatcher(PageReturner.getPage("showLogin"))
+                    .forward(request, response);
+                break;
+            }
             String nameRole = request.getParameter("nameRole");
             Role role = new Role();
             role.setName(nameRole.toUpperCase());
@@ -89,17 +140,29 @@ public class Secure extends HttpServlet {
             } catch (Exception e) {
                request.setAttribute("info", "Такая роль уже существует");
             }
-            request.getRequestDispatcher(PageReturner.getPage("newRole")).forward(request, response);
+            request.getRequestDispatcher(PageReturner.getPage("newRole"))
+                    .forward(request, response);
             break;
             
         case "/editUserRoles":
+            if(!"ADMIN".equals(sl.getRole(regUser))){
+                request.getRequestDispatcher(PageReturner.getPage("showLogin"))
+                    .forward(request, response);
+                break;
+            }
             List<Reader> listUsers = readerFacade.findAll();
             List<Role> listRoles = roleFacade.findAll();
             request.setAttribute("listUsers", listUsers);
             request.setAttribute("listRoles", listRoles);
-            request.getRequestDispatcher(PageReturner.getPage("editUserRoles")).forward(request, response);
+            request.getRequestDispatcher(PageReturner.getPage("editUserRoles"))
+                    .forward(request, response);
             break;
         case "/changeUserRole":
+            if(!"ADMIN".equals(sl.getRole(regUser))){
+                request.getRequestDispatcher(PageReturner.getPage("showLogin"))
+                    .forward(request, response);
+                break;
+            }
             String setButton = request.getParameter("setButton");
             String deleteButton = request.getParameter("deleteButton");
             String userId = request.getParameter("user");
@@ -108,7 +171,7 @@ public class Secure extends HttpServlet {
             Role roleToUser = roleFacade.find(new Long(roleId));
             UserRoles ur = new UserRoles(reader, roleToUser);
             
-            SecureLogic sl = new SecureLogic();
+            
             if(setButton != null){
                 sl.addRoleToUser(ur);
             }
@@ -120,7 +183,8 @@ public class Secure extends HttpServlet {
             List<Role> newListRoles = roleFacade.findAll();
             request.setAttribute("listUsers", newListUsers);
             request.setAttribute("listRoles", newListRoles);
-            request.getRequestDispatcher(PageReturner.getPage("editUserRoles")).forward(request, response);
+            request.getRequestDispatcher(PageReturner.getPage("editUserRoles"))
+                    .forward(request, response);
             break;
             }
     }

@@ -52,4 +52,21 @@ public class SecureLogic {
             userRolesFacade.remove(listUserRoles.get(i));
         }
     }
+
+    public String getRole(Reader regUser) {
+        List<UserRoles> listUserRoles = userRolesFacade.findByUser(regUser);
+        int n = listUserRoles.size();
+        for(int i = 0; i<n; i++){
+            if("ADMIN".equals(listUserRoles.get(i).getRole().getName())){
+                return listUserRoles.get(i).getRole().getName();
+            }
+        }
+        for(int i = 0; i<n; i++){
+            if("USER".equals(listUserRoles.get(i).getRole().getName())){
+                return listUserRoles.get(i).getRole().getName();
+            }
+        }
+        return null;
+    }
+    
 }

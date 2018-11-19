@@ -25,6 +25,7 @@
                 <tr>
                     <td>
                         <select name="user">
+                            <option value="" disabled selected hidden></option>
                             <c:forEach var="entry" items="${mapUsers}">
                                 <option value="${entry.key.id}">${entry.key.login}, роль: ${entry.value} </option>
                             </c:forEach>
@@ -32,6 +33,7 @@
                     </td>
                     <td>
                         <select name="role">
+                            <option value="" disabled selected hidden></option>
                             <c:forEach var="role" items="${listRoles}">
                                 <option value="${role.id}">${role.name}</option>
                             </c:forEach>

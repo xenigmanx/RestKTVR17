@@ -29,7 +29,7 @@ public class ReaderFacade extends AbstractFacade<Reader> {
         super(Reader.class);
     }
 
-    public Reader fineByLogin(String login) {
+    public Reader findByLogin(String login) {
         try {
             return (Reader) em.createQuery("SELECT r FROM Reader r WHERE r.login = :login")
                 .setParameter("login", login)

@@ -98,7 +98,7 @@ public class Secure extends HttpServlet {
             String login = request.getParameter("login");
             String password = request.getParameter("password");
             request.setAttribute("info", "Нет такого пользователя!");
-            regUser = readerFacade.fineByLogin(login);
+            regUser = readerFacade.findByLogin(login);
             if(regUser == null){
                 request.getRequestDispatcher(PageReturner.getPage("showLogin"))
                     .forward(request, response);
@@ -132,7 +132,8 @@ public class Secure extends HttpServlet {
                     .forward(request, response);
             break;
         case "/editUserRoles":
-            if(!"ADMIN".equals(sl.getRole(regUser))){
+            if(!sl.isRole(regUser, "ADMIN")){
+                request.setAttribute("info", "У вас нет прав доступа к ресурсу");
                 request.getRequestDispatcher(PageReturner.getPage("showLogin"))
                     .forward(request, response);
                 break;
@@ -151,7 +152,8 @@ public class Secure extends HttpServlet {
                     .forward(request, response);
             break;
         case "/changeUserRole":
-            if(!"ADMIN".equals(sl.getRole(regUser))){
+            if(!sl.isRole(regUser, "ADMIN")){
+                request.setAttribute("info", "У вас нет прав доступа к ресурсу");
                 request.getRequestDispatcher(PageReturner.getPage("showLogin"))
                     .forward(request, response);
                 break;

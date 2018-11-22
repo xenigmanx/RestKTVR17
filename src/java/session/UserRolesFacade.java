@@ -36,5 +36,7 @@ public class UserRolesFacade extends AbstractFacade<UserRoles> {
                 .setParameter("reader", reader)
                 .getResultList();
     }
+
+   
     
 }

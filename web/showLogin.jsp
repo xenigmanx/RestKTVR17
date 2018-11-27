@@ -9,6 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="css/showLogin.css">
         <title>Вход в систему</title>
     </head>
     <body>
@@ -24,5 +25,6 @@
             <input type="submit" value="Войти">
         </form><br><br>
         <a href="newReader">Зарегистрироваться</a>
+        <script src="js/showLogin.js"></script>
     </body>
 </html>

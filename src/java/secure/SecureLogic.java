@@ -5,7 +5,7 @@
  */
 package secure;
 
-import entity.Reader;
+import entity.User;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,14 +38,14 @@ public class SecureLogic {
         if(ur.getRole().getName().equals("ADMIN")){
             userRolesFacade.create(ur);
             Role addNewRole = roleFacade.findRoleByName("USER");
-            UserRoles addedNewRoles = new UserRoles(ur.getReader(),addNewRole);
+            UserRoles addedNewRoles = new UserRoles(ur.getUser(),addNewRole);
             userRolesFacade.create(addedNewRoles);
         }else if(ur.getRole().getName().equals("USER")){
             userRolesFacade.create(ur);
         }
         
     }
-    public void deleteRoleToUser(Reader user){
+    public void deleteRoleToUser(User user){
         List<UserRoles> listUserRoles = userRolesFacade.findByUser(user);
         int n = listUserRoles.size();
         for(int i=0; i<n; i++){
@@ -53,8 +53,9 @@ public class SecureLogic {
         }
     }
 
-    public boolean isRole(Reader reader, String roleName){
-        List<UserRoles> listUserRoles = userRolesFacade.findByUser(reader);
+    public boolean isRole(User user, String roleName){
+        if(user == null) return false;
+        List<UserRoles> listUserRoles = userRolesFacade.findByUser(user);
         Role role = roleFacade.findRoleByName(roleName);
         int n = listUserRoles.size();
         for(int i = 0; i < n; i++){
@@ -65,7 +66,7 @@ public class SecureLogic {
         return false;
     }
     
-    public String getRole(Reader regUser) {
+    public String getRole(User regUser) {
         List<UserRoles> listUserRoles = userRolesFacade.findByUser(regUser);
         int n = listUserRoles.size();
         for(int i = 0; i<n; i++){

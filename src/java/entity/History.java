@@ -30,7 +30,7 @@ public class History implements Serializable {
     @OneToOne(cascade = CascadeType.MERGE)
     private Book book;
     @OneToOne
-    private Reader reader;
+    private User user;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateBegin;
     @Temporal(TemporalType.TIMESTAMP)
@@ -39,9 +39,9 @@ public class History implements Serializable {
     public History() {
     }
 
-    public History(Book book, Reader reader, Date dateBegin, Date dateReturn) {
+    public History(Book book, User user, Date dateBegin, Date dateReturn) {
         this.book = book;
-        this.reader = reader;
+        this.user = user;
         this.dateBegin = dateBegin;
         this.dateReturn = dateReturn;
     }
@@ -62,12 +62,12 @@ public class History implements Serializable {
         this.book = book;
     }
 
-    public Reader getReader() {
-        return reader;
+    public User getUser() {
+        return user;
     }
 
-    public void setReader(Reader reader) {
-        this.reader = reader;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Date getDateBegin() {
@@ -91,7 +91,7 @@ public class History implements Serializable {
         int hash = 3;
         hash = 97 * hash + Objects.hashCode(this.id);
         hash = 97 * hash + Objects.hashCode(this.book);
-        hash = 97 * hash + Objects.hashCode(this.reader);
+        hash = 97 * hash + Objects.hashCode(this.user);
         hash = 97 * hash + Objects.hashCode(this.dateBegin);
         hash = 97 * hash + Objects.hashCode(this.dateReturn);
         return hash;
@@ -115,7 +115,7 @@ public class History implements Serializable {
         if (!Objects.equals(this.book, other.book)) {
             return false;
         }
-        if (!Objects.equals(this.reader, other.reader)) {
+        if (!Objects.equals(this.user, other.user)) {
             return false;
         }
         if (!Objects.equals(this.dateBegin, other.dateBegin)) {
@@ -131,9 +131,9 @@ public class History implements Serializable {
     public String toString() {
         SimpleDateFormat sdm = new SimpleDateFormat("dd.mm.yyyy");
         if(dateReturn != null){
-            return "History{" + "id=" + id + ", book=" + book.getNameBook() + ", reader=" + reader.getName()+" "+reader.getSurname() + ", dateBegin=" + sdm.format(dateBegin) + ", dateReturn=" + sdm.format(dateReturn) + '}';
+            return "History{" + "id=" + id + ", book=" + book.getNameBook() + ", user=" + user.getName()+" "+user.getSurname() + ", dateBegin=" + sdm.format(dateBegin) + ", dateReturn=" + sdm.format(dateReturn) + '}';
         }else{
-            return "History{" + "id=" + id + ", book=" + book.getNameBook() + ", reader=" + reader.getName()+" "+reader.getSurname() + ", dateBegin=" + sdm.format(dateBegin) + '}';
+            return "History{" + "id=" + id + ", book=" + book.getNameBook() + ", user=" + user.getName()+" "+user.getSurname() + ", dateBegin=" + sdm.format(dateBegin) + '}';
         }
     }
     

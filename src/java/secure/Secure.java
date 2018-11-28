@@ -5,7 +5,7 @@
  */
 package secure;
 
-import entity.Reader;
+import entity.User;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import session.ReaderFacade;
+import session.UserFacade;
 import session.RoleFacade;
 import session.UserRolesFacade;
 import util.EncriptPass;
@@ -31,35 +31,35 @@ import util.PageReturner;
     "/login",
     "/logout",
     "/showLogin",
-    "/editUserRoles",
+    "/showUserRoles",
     "/changeUserRole"
 })
 public class Secure extends HttpServlet {
    
     @EJB RoleFacade roleFacade;
-    @EJB ReaderFacade readerFacade;
+    @EJB UserFacade userFacade;
     @EJB UserRolesFacade userRolesFacade;
 
     @Override
     public void init() throws ServletException {
-        List<Reader> listReader = readerFacade.findAll();
+        List<User> listReader = userFacade.findAll();
         if(listReader.isEmpty()){
             EncriptPass ep = new EncriptPass();
             String salts = ep.createSalts();
             String encriptPass = ep.setEncriptPass("admin", salts);
-            Reader reader = new Reader("Сидор", "Сидоров", 
+            User user = new User("Сидор", "Сидоров", 
                  "454545454", "К-Ярве", "admin", encriptPass, salts);
-            readerFacade.create(reader);
+            userFacade.create(user);
             Role role = new Role();
             role.setName("ADMIN");
             roleFacade.create(role);
             UserRoles ur = new UserRoles();
-            ur.setReader(reader);
+            ur.setUser(user);
             ur.setRole(role);
             userRolesFacade.create(ur);
             role.setName("USER");
             roleFacade.create(role);
-            ur.setReader(reader);
+            ur.setUser(user);
             ur.setRole(role);
             userRolesFacade.create(ur);
         }
@@ -81,10 +81,10 @@ public class Secure extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF8");
         HttpSession session = request.getSession(false);
-        Reader regUser = null;
+        User regUser = null;
         if(session != null){
             try {
-                regUser = (Reader) session.getAttribute("regUser");
+                regUser = (User) session.getAttribute("regUser");
             } catch (Exception e) {
                 regUser = null;
             }
@@ -98,7 +98,7 @@ public class Secure extends HttpServlet {
             String login = request.getParameter("login");
             String password = request.getParameter("password");
             request.setAttribute("info", "Нет такого пользователя!");
-            regUser = readerFacade.findByLogin(login);
+            regUser = userFacade.findByLogin(login);
             if(regUser == null){
                 request.getRequestDispatcher(PageReturner.getPage("showLogin"))
                     .forward(request, response);
@@ -131,16 +131,16 @@ public class Secure extends HttpServlet {
             request.getRequestDispatcher(PageReturner.getPage("welcome"))
                     .forward(request, response);
             break;
-        case "/editUserRoles":
+        case "/showUserRoles":
             if(!sl.isRole(regUser, "ADMIN")){
                 request.setAttribute("info", "У вас нет прав доступа к ресурсу");
                 request.getRequestDispatcher(PageReturner.getPage("showLogin"))
-                    .forward(request, response);
+                        .forward(request, response);
                 break;
-            }
+            } 
             
-            Map<Reader,String> mapUsers = new HashMap<>();
-            List<Reader> listUsers = readerFacade.findAll();
+            Map<User,String> mapUsers = new HashMap<>();
+            List<User> listUsers = userFacade.findAll();
             int n = listUsers.size();
             for(int i=0;i<n;i++){
                 mapUsers.put(listUsers.get(i), sl.getRole(listUsers.get(i)));
@@ -148,7 +148,7 @@ public class Secure extends HttpServlet {
             List<Role> listRoles = roleFacade.findAll();
             request.setAttribute("mapUsers", mapUsers);
             request.setAttribute("listRoles", listRoles);
-            request.getRequestDispatcher(PageReturner.getPage("editUserRoles"))
+            request.getRequestDispatcher(PageReturner.getPage("showUserRoles"))
                     .forward(request, response);
             break;
         case "/changeUserRole":
@@ -162,17 +162,17 @@ public class Secure extends HttpServlet {
             String deleteButton = request.getParameter("deleteButton");
             String userId = request.getParameter("user");
             String roleId = request.getParameter("role");
-            Reader reader = readerFacade.find(new Long(userId));
+            User reader = userFacade.find(new Long(userId));
             Role roleToUser = roleFacade.find(new Long(roleId));
             UserRoles ur = new UserRoles(reader, roleToUser);
             if(setButton != null){
                 sl.addRoleToUser(ur);
             }
             if(deleteButton != null){
-                sl.deleteRoleToUser(ur.getReader());
+                sl.deleteRoleToUser(ur.getUser());
             }
             mapUsers = new HashMap<>();
-            listUsers = readerFacade.findAll();   
+            listUsers = userFacade.findAll();   
             n = listUsers.size();
             for(int i=0;i<n;i++){
                 mapUsers.put(listUsers.get(i), sl.getRole(listUsers.get(i)));
@@ -180,7 +180,7 @@ public class Secure extends HttpServlet {
             request.setAttribute("mapUsers", mapUsers);
             List<Role> newListRoles = roleFacade.findAll();
             request.setAttribute("listRoles", newListRoles);
-            request.getRequestDispatcher(PageReturner.getPage("editUserRoles"))
+            request.getRequestDispatcher(PageReturner.getPage("showUserRoles"))
                     .forward(request, response);
             break;
             }

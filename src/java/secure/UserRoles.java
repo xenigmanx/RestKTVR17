@@ -5,7 +5,7 @@
  */
 package secure;
 
-import entity.Reader;
+import entity.User;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,15 +23,15 @@ public class UserRoles {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne
-    private Reader reader;
+    private User user;
     @OneToOne
     private Role role;
 
     public UserRoles() {
     }
 
-    public UserRoles(Reader reader, Role role) {
-        this.reader = reader;
+    public UserRoles(User reader, Role role) {
+        this.user = reader;
         this.role = role;
     }
 
@@ -43,12 +43,12 @@ public class UserRoles {
         this.id = id;
     }
 
-    public Reader getReader() {
-        return reader;
+    public User getUser() {
+        return user;
     }
 
-    public void setReader(Reader reader) {
-        this.reader = reader;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Role getRole() {
@@ -63,7 +63,7 @@ public class UserRoles {
     public int hashCode() {
         int hash = 7;
         hash = 29 * hash + Objects.hashCode(this.id);
-        hash = 29 * hash + Objects.hashCode(this.reader);
+        hash = 29 * hash + Objects.hashCode(this.user);
         hash = 29 * hash + Objects.hashCode(this.role);
         return hash;
     }
@@ -83,7 +83,7 @@ public class UserRoles {
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
-        if (!Objects.equals(this.reader, other.reader)) {
+        if (!Objects.equals(this.user, other.user)) {
             return false;
         }
         if (!Objects.equals(this.role, other.role)) {
@@ -94,7 +94,7 @@ public class UserRoles {
 
     @Override
     public String toString() {
-        return "UserRoles{" + "id=" + id + ", reader=" + reader.getLogin() + ", role=" + role.getName() + '}';
+        return "UserRoles{" + "id=" + id + ", user=" + user.getLogin() + ", role=" + role.getName() + '}';
     }
     
     

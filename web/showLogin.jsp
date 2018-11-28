@@ -15,14 +15,14 @@
     <body>
         <h1>Введите логин и пароль</h1>
         ${info}<br>
-        <form action="login" method="POST" name="form1" id="_form1">
+        <form action="login" method="POST" onsubmit="return validate()" name="form1" id="_form1">
              Логин:<br>
-            <input type="text" name="login"><br>
+            <input type="text" name="login" id="login"><br>
             <br>
              Пароль:<br>
-            <input type="password" name="password"><br>
+            <input type="password" name="password" id="password"><br>
             <br>
-            <input type="submit" value="Войти">
+            <input type="submit" value="Войти" id="button">
         </form><br><br>
         <a href="newReader">Зарегистрироваться</a>
         <script src="js/showLogin.js"></script>

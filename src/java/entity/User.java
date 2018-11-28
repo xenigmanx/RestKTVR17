@@ -17,7 +17,7 @@ import javax.persistence.Id;
  * @author Melnikov
  */
 @Entity
-public class Reader {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +30,10 @@ public class Reader {
     private String password;
     private String salts;
 
-    public Reader() {
+    public User() {
     }
 
-    public Reader(String name, String surname, String phone, String city, String login, String password) {
+    public User(String name, String surname, String phone, String city, String login, String password) {
         this.name = name;
         this.surname = surname;
         this.phone = phone;
@@ -42,7 +42,7 @@ public class Reader {
         this.password = password;
     }
 
-    public Reader(String name, String surname, String phone, String city, String login, String password, String salts) {
+    public User(String name, String surname, String phone, String city, String login, String password, String salts) {
         this.name = name;
         this.surname = surname;
         this.phone = phone;
@@ -137,7 +137,7 @@ public class Reader {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Reader other = (Reader) obj;
+        final User other = (User) obj;
         if (!Objects.equals(this.login, other.login)) {
             return false;
         }

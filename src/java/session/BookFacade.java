@@ -31,9 +31,14 @@ public class BookFacade extends AbstractFacade<Book> {
     }
 
     public List<Book> findActived(boolean active) {
-        return em.createQuery("SELECT b FROM Book b WHERE b.active = :active AND b.count > 0")
+        try {
+            return em.createQuery("SELECT b FROM Book b WHERE b.active = :active AND b.count > 0")
                 .setParameter("active", active)
                 .getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+        
     }
     
 }

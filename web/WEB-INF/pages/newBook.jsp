@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <style>${pageContext.include("css/newBook.css")}'</style>
+        <style>${pageContext.include("css/newBook.css")}</style>
         <title>Новая книга</title>
     </head>
     <body>

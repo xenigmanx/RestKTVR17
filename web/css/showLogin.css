@@ -7,6 +7,9 @@ and open the template in the editor.
     Created on : 27.11.2018, 16:58:28
     Author     : jvm
 */
+h1{
+    color:blue;
+}
 .invalid{
     border: 1px solid #f60;
 }

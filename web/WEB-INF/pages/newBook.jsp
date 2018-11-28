@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <style>${pageContext.include("css/newBook.css")}</style>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/newBook.css">
         <title>Новая книга</title>
     </head>
     <body>
@@ -30,6 +30,6 @@
             <input type="submit" value="Добавить">
         </form><br>
         
-        <script>${pageContext.include("js/newBook.js")}</script>
+        <script src="${pageContext.request.contextPath}/js/newBook.js"></script>
     </body>
 </html>
